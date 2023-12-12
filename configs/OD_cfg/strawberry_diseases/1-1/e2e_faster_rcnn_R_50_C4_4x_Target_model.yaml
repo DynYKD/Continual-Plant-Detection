@@ -1,0 +1,47 @@
+MODEL:
+  META_ARCHITECTURE: "GeneralizedRCNN"
+  WEIGHT: "output/1-1/LR005_BS4_10K/model_trimmed.pth"
+  SOURCE_WEIGHT: "output/1-1/LR005_BS4_10K/model_final.pth"
+  BACKBONE:
+    CONV_BODY: "R-50-C4"
+  RESNETS:
+    BACKBONE_OUT_CHANNELS: 1024
+  RPN:
+    ANCHOR_STRIDE: (16,)
+    PRE_NMS_TOP_N_TEST: 6000
+    POST_NMS_TOP_N_TEST: 1000
+  ROI_BOX_HEAD:
+    POOLER_RESOLUTION: 7
+    POOLER_SCALES: (0.0625,)
+    POOLER_SAMPLING_RATIO: 2
+    FEATURE_EXTRACTOR: "ResNet50Conv5ROIFeatureExtractor"
+    PREDICTOR: "FastRCNNPredictor"
+    NUM_CLASSES: 8
+    NAME_OLD_CLASSES: ["aeroplane"]
+    NAME_NEW_CLASSES: ["bicycle", "bird", "boat", "bottle", "bus", "car"]
+    NAME_EXCLUDED_CLASSES: [ ]
+  MASK_ON: False
+  ROI_MASK_HEAD:
+    PREDICTOR: "MaskRCNNC4Predictor"
+    SHARE_BOX_FEATURE_EXTRACTOR: True
+    POSTPROCESS_MASKS: True
+DATASETS:
+  TRAIN: ("strawberry_train_voc_2012","strawberry_val_voc_2012")
+  TEST: ("strawberry_test_voc_2012",)
+DATALOADER:
+  SIZE_DIVISIBILITY: 0
+SOLVER:
+  BASE_LR: 0.0001 # start learning rate
+  WEIGHT_DECAY: 0.0001
+  GAMMA: 0.1  # learning rate decay
+  STEPS: (2200,)
+  MAX_ITER: 2500  # number of iteration
+  CHECKPOINT_PERIOD: 2000 # number of iteration to generate check point
+  IMS_PER_BATCH: 4 # number of images per batch
+  MOMENTUM: 0.9
+TEST: # testing strategy
+  IMS_PER_BATCH: 1 # number of images per batch
+
+CLS_PER_STEP: 1
+OUTPUT_DIR: "output/"
+TENSORBOARD_DIR: "output/"
